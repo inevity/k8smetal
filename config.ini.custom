@@ -1,0 +1,3 @@
+#import "/usr/local/ddns/etc/config.ini"
+
+enable_notify=true
