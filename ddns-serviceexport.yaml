@@ -8,12 +8,17 @@ metadata:
   selfLink: /api/v1/namespaces/default/services/ddns
 spec:
   ports:
-  - port: 53
-    protocol: TCP
+  - name: basesvc
+    port: 53
+    protocol: UDP
     targetPort: 53
+  - name: backupsvc
+    port: 533
+    protocol: UDP
+    targetPort: 533
   selector:
     run: ddns
   sessionAffinity: None
-  type: ClusterIP
+  type: NodePort
 status:
   loadBalancer: {}
