@@ -84,7 +84,7 @@ status() {
 
 startDirect() {
   echo $CMD
-  $CMD
+  exec gosu root $CMD
 }
 Usage="Usage:`basename $0` [start|stop|restart|status|stdout]"
 if [ $# -ne 1 ];then
@@ -108,4 +108,4 @@ else
   echo $Usage
   exit 2
 fi
-
+exec "$@"
