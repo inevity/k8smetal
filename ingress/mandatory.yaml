@@ -84,6 +84,10 @@ apiVersion: v1
 metadata:
   name: udp-services
   namespace: ingress-nginx
+data:
+  53: "default/ddns2:53"
+  533: "default/ddns2:533"
+
 ---
 
 apiVersion: v1
@@ -251,6 +255,7 @@ spec:
             - --udp-services-configmap=$(POD_NAMESPACE)/udp-services
             - --publish-service=$(POD_NAMESPACE)/ingress-nginx
             - --annotations-prefix=nginx.ingress.kubernetes.io
+            - --ingress-class=httpingress
           securityContext:
             capabilities:
                 drop:
@@ -269,10 +274,12 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
           ports:
-          - name: http
-            containerPort: 80
-          - name: https
-            containerPort: 443
+          - name: basesvcm
+            containerPort: 53
+            protocol: UDP
+          - name: backupsvcm
+            protocol: UDP
+            containerPort: 533
           livenessProbe:
             failureThreshold: 3
             httpGet:

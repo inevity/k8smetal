@@ -6,13 +6,13 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - name: http
-    port: 80
-    targetPort: 80
-    protocol: TCP
-  - name: https
-    port: 443
-    targetPort: 443
-    protocol: TCP
+  - name: basesvcm
+    port: 53
+    protocol: UDP
+    targetPort: 53
+  - name: backupsvcm
+    port: 533
+    protocol: UDP
+    targetPort: 533
   selector:
     app: ingress-nginx
