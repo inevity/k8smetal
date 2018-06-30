@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ddns
+  name: ddns2
+  selfLink: /api/v1/namespaces/default/services/ddns2
+spec:
+  ports:
+  - name: port-1
+    port: 53
+    protocol: UDP
+    targetPort: 53
+  - name: port-2
+    port: 533
+    protocol: UDP
+    targetPort: 533
+  selector:
+    run: ddns
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
