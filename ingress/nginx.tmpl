@@ -10,6 +10,7 @@
 # Configuration checksum: {{ $all.Cfg.Checksum }}
 
 # setup custom paths that do not require root access
+user root;
 pid /tmp/nginx.pid;
 
 {{ if $cfg.EnableModsecurity }}
@@ -648,6 +649,7 @@ stream {
         {{ end }}
         proxy_responses         {{ $cfg.ProxyStreamResponses }};
         proxy_timeout           {{ $cfg.ProxyStreamTimeout }};
+        proxy_bind              $remote_addr transparent;
         proxy_pass              udp-{{ $udpServer.Port }}-{{ $udpServer.Backend.Namespace }}-{{ $udpServer.Backend.Name }}-{{ $udpServer.Backend.Port }};
     }
 
