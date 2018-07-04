@@ -11,7 +11,7 @@ metadata:
   name: ddns
 spec:
   progressDeadlineSeconds: 600
-  replicas: 10
+  replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -50,13 +50,25 @@ spec:
 #        livenessProbe:
 #          failureThreshold: 3
 #          httpGet:
-#            path: /healthz
-#            port: 10254
+#            path: /httpdns/nxnop0702.flxdns.com?subclient=60.220.0.0
+#            port: 9153
 #            scheme: HTTP
 #          initialDelaySeconds: 10
 #          periodSeconds: 10
 #          successThreshold: 1
-#          timeoutSeconds: 1
+#          timeoutSeconds: 1 
+#
+#        livenessProbe:
+#          tcpSocket:
+#            port: 9153
+#          initialDelaySeconds: 15
+#          periodSeconds: 40
+#        readinessProbe:
+#          tcpSocket:
+#            port: 9153
+#          initialDelaySeconds: 5
+#          periodSeconds: 20
+#
 #        readinessProbe:
 #          failureThreshold: 3
 #          httpGet:
