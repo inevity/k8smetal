@@ -178,7 +178,8 @@ RUN set -ex; \
 #&& addgroup -S nginx \
 #	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \ 
 #   copy binary to container
-RUN  mkdir -p /var/log/ddns/ && mkdir -p /usr/local/ddns/bin  && ln -sf /dev/stdout /var/log/ddns/ddns.log && ln -sf /dev/stderr /var/log/ddns/ddns.error.log 
+RUN  mkdir -p /var/log/ddns/ && mkdir -p /usr/local/ddns/bin  && ln -sf /dev/stdout /var/log/ddns/ddns.query.log && ln -sf /dev/stderr /var/log/ddns/ddns.error.log 
+#note:ddns query log . ddns.log for syslog,now omit
 COPY bin /usr/local/ddns/bin
 #Dockerfile		bin			etc			etc.md5
 #Dockerfilenginx		config.ini.custom	etc.data_version	persistent
@@ -209,7 +210,7 @@ VOLUME /usr/local/ddns
 #VOLUME /etc/nginx
 #
 EXPOSE 53/udp
-EXPOSE 5333/udp
+EXPOSE 9153/tcp
 
 STOPSIGNAL SIGTERM
 
