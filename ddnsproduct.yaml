@@ -44,9 +44,11 @@ spec:
         - name: basesvcm
           containerPort: 53
           protocol: UDP
+          #hostPort: 53
         - name: backupsvcm
           protocol: TCP
           containerPort: 9153
+          #hostPort: 9153
 #        livenessProbe:
 #          failureThreshold: 3
 #          httpGet:

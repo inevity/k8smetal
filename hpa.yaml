@@ -1,32 +1,17 @@
-apiVersion: v1
-items:
-- apiVersion: autoscaling/v1
-  kind: HorizontalPodAutoscaler
-  metadata:
-    annotations:
-      autoscaling.alpha.kubernetes.io/conditions: '[{"type":"AbleToScale","status":"True","lastTransitionTime":"2018-07-03T08:27:05Z","reason":"SucceededGetScale","message":"the
-        HPA controller was able to get the target''s current scale"},{"type":"ScalingActive","status":"False","lastTransitionTime":"2018-07-03T08:27:05Z","reason":"FailedGetResourceMetric","message":"the
-        HPA was unable to compute the replica count: unable to get metrics for resource
-        cpu: unable to fetch metrics from resource metrics API: the server could not
-        find the requested resource (get pods.metrics.k8s.io)"}]'
-    creationTimestamp: 2018-07-03T08:26:35Z
-    name: ddns
-    namespace: default
-    resourceVersion: "13086"
-    selfLink: /apis/autoscaling/v1/namespaces/default/horizontalpodautoscalers/ddns
-    uid: cc5be133-7e9a-11e8-933d-70e2840fa859
-  spec:
-    maxReplicas: 10
-    minReplicas: 1
-    scaleTargetRef:
-      apiVersion: extensions/v1beta1
-      kind: Deployment
-      name: ddns
-    targetCPUUtilizationPercentage: 50
-  status:
-    currentReplicas: 1
-    desiredReplicas: 0
-kind: List
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
 metadata:
-  resourceVersion: ""
-  selfLink: ""
+  creationTimestamp: null
+  name: ddns
+  selfLink: /apis/autoscaling/v1/namespaces/default/horizontalpodautoscalers/ddns
+spec:
+  maxReplicas: 30
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: ddns
+  targetCPUUtilizationPercentage: 10
+status:
+  currentReplicas: 0
+  desiredReplicas: 0
