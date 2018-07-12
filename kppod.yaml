@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  generateName: kube-proxy-
+  labels:
+    controller-revision-hash: "1151982146"
+    k8s-app: kube-proxy
+    pod-template-generation: "1"
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: DaemonSet
+    name: kube-proxy
+    uid: 0dc86be0-7e83-11e8-933d-70e2840fa859
+  selfLink: /api/v1/namespaces/kube-system/pods/kube-proxy-n286j
+spec:
+  containers:
+  - command:
+    - /usr/local/bin/kube-proxy
+    - --config=/var/lib/kube-proxy/config.conf
+    image: k8s.gcr.io/kube-proxy-amd64:v1.11.0
+    imagePullPolicy: IfNotPresent
+    name: kube-proxy
+    resources: {}
+    securityContext:
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/lib/kube-proxy
+      name: kube-proxy
+    - mountPath: /run/xtables.lock
+      name: xtables-lock
+    - mountPath: /lib/modules
+      name: lib-modules
+      readOnly: true
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-proxy-token-ckvcp
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  hostNetwork: true
+  nodeName: registr.dnion.com
+  nodeSelector:
+    beta.kubernetes.io/arch: amd64
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: kube-proxy
+  serviceAccountName: kube-proxy
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/disk-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/memory-pressure
+    operator: Exists
+  volumes:
+  - configMap:
+      defaultMode: 420
+      name: kube-proxy
+    name: kube-proxy
+  - hostPath:
+      path: /run/xtables.lock
+      type: FileOrCreate
+    name: xtables-lock
+  - hostPath:
+      path: /lib/modules
+      type: ""
+    name: lib-modules
+  - name: kube-proxy-token-ckvcp
+    secret:
+      defaultMode: 420
+      secretName: kube-proxy-token-ckvcp
+status:
+  phase: Pending
+  qosClass: BestEffort
