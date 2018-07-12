@@ -2,3 +2,7 @@
 */temp*
 */*/temp*
 temp?
+ddns*
+ingress/*
+*.yaml
+*.sh
