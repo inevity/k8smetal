@@ -20,7 +20,8 @@ spec:
   - command:
     - /usr/local/bin/kube-proxy
     - --config=/var/lib/kube-proxy/config.conf
-    image: k8s.gcr.io/kube-proxy-amd64:v1.11.0
+   # image: k8s.gcr.io/kube-proxy-amd64:v1.11.0
+    image: registr.dnion.com:5000/kube-proxy:v1.11.1-beta.0.61_372d53240d2beb-dirty
     imagePullPolicy: IfNotPresent
     name: kube-proxy
     resources: {}
