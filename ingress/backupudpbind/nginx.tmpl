@@ -618,7 +618,6 @@ stream {
         {{ end }}
         {{ end }}
         proxy_timeout           {{ $cfg.ProxyStreamTimeout }};
-        proxy_bind              $remote_addr transparent;
         proxy_pass              tcp-{{ $tcpServer.Port }}-{{ $tcpServer.Backend.Namespace }}-{{ $tcpServer.Backend.Name }}-{{ $tcpServer.Backend.Port }};
         {{ if $tcpServer.Backend.ProxyProtocol.Encode }}
         proxy_protocol          on;

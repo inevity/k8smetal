@@ -5,23 +5,14 @@ metadata:
   namespace: ingress-nginx
 spec:
   type: NodePort
-  #externalTrafficPolicy: Local
   ports:
   - name: basesvcm
     port: 53
     protocol: UDP
     targetPort: 53
   - name: backupsvcm
-    port: 9153
-    protocol: TCP
-    targetPort: 9153
-  - name: http
-    port: 80
-    targetPort: 80
-    protocol: TCP
-  - name: https
-    port: 443
-    targetPort: 443
-    protocol: TCP
+    port: 533
+    protocol: UDP
+    targetPort: 533
   selector:
     app: ingress-nginx
