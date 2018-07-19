@@ -178,7 +178,7 @@ rules:
       # This has to be adapted if you change either parameter
       # when launching the nginx-ingress-controller.
       #- "ingress-controller-leader-nginx"
-      - "ingress-controller-leader-httpingress"
+#      - "ingress-controller-leader-httpingress"
       #httpingress for normalupd 
       - "ingress-controller-leader-udpingress"
      # - "ingress-controller-leader-nginx"
@@ -250,17 +250,29 @@ spec:
         prometheus.io/scrape: 'true'
         #security.alpha.kubernetes.io/sysctls: 
         #security.alpha.kubernetes.io/unsafe-sysctls: net.ipv4.conf.all.rp_filter=0,net.ipv4.conf.default.rp_filter=0,net.ipv4.conf.eth0.rp_filter=0,net.ipv4.conf.lo.rp_filter=0
-        security.alpha.kubernetes.io/unsafe-sysctls: net.ipv4.conf.all.rp_filter=0,net.ipv4.conf.default.rp_filter=0,net.ipv4.conf.lo.rp_filter=0
+        #security.alpha.kubernetes.io/unsafe-sysctls: net.ipv4.conf.all.rp_filter=0,net.ipv4.conf.default.rp_filter=0,net.ipv4.conf.lo.rp_filter=0
     spec:
       serviceAccountName: nginx-ingress-serviceaccount
-      nodeSelector:
-        nodeattr: sysctl
+    #  nodeSelector:
+    #    nodeattr: sysctl
       #hostNetwork: true
+  #    securityContext:
+  #      # 1.11 how quick upgrade?
+  #      sysctls:
+  #      - name: net.ipv4.conf.all.rp_filter
+  #        value: "0"
+  #      - name: net.ipv4.conf.default.rp_filter
+  #        value: "0"
+  #     # - name: net.ipv4.conf.eth0.rp_filter
+  #     #   value: "0"
+  #      - name: net.ipv4.conf.lo.rp_filter
+  #        value: "0"
       containers:
         - name: nginx-ingress-controller-udpbind
          # image: cs9.dnion.com:5000/udpingress:dev
           #image: registr.dnion.com:5000/nginx-ingress-controller:addiptbl
-          image: cs9.dnion.com:5000/nginx-ingress-controller:addiptbl2
+          #image: registr.dnion.com:5000/nginx-ingress-controller:addiptbl2
+          image: registr.dnion.com:5000/nginx-ingress-controller:v2nonginxtmplmodify
           #image: baojg/ingress-controller/nginx-ingress-controller:addiptbl
           imagePullPolicy: IfNotPresent
           securityContext:
@@ -268,16 +280,6 @@ spec:
             capabilities:
               add:
               - NET_ADMIN
-           # 1.11 how quick upgrade?
-           # sysctls:
-           # - name: net.ipv4.conf.all.rp_filter
-           #   value: "0"
-           # - name: net.ipv4.conf.default.rp_filter
-           #   value: "0"
-           # - name: net.ipv4.conf.eth0.rp_filter
-           #   value: "0"
-           # - name: net.ipv4.conf.lo.rp_filter
-           #   value: "0"
           args:
             - /nginx-ingress-controller
             - --default-backend-service=$(POD_NAMESPACE)/default-http-backend
@@ -287,7 +289,9 @@ spec:
             - --publish-service=$(POD_NAMESPACE)/ingress-nginx-udpbind
             - --annotations-prefix=nginx.ingress.kubernetes.io
             - --ingress-class=udpingress
-            - --v=3
+            #- --kubeconfig=/etc/kubernetes/admin.conf
+           # - --kubeconfig=/etc/kubernetes/kubelet.conf
+            - --v=12
                 # securityContext:
                 #   capabilities:
                 #       drop:
@@ -344,17 +348,17 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
-          volumeMounts:
-            - mountPath: /etc/nginx/template
-              name: nginx-template-volume
-              readOnly: true
-      volumes:
-        - name: nginx-template-volume
-          configMap:
-            #name: udpnginxtemplateconfig
-            # if we have create configmap,we need not items below.
-            name: nginx-template
-            items:
-            - key: nginx.tmpl
-              path: nginx.tmpl
-
+#          volumeMounts:
+#            - mountPath: /etc/nginx/template
+#              name: nginx-template-volume
+#              readOnly: true
+#      volumes:
+#        - name: nginx-template-volume
+#          configMap:
+#            #name: udpnginxtemplateconfig
+#            # if we have create configmap,we need not items below.
+#            name: nginx-template
+#            items:
+#            - key: nginx.tmpl
+#              path: nginx.tmpl
+#
