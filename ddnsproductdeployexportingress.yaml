@@ -32,6 +32,10 @@ spec:
       - image: registr.dnion.com:5000/ddns:v1
         imagePullPolicy: IfNotPresent
         name: ddns
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
         ports:
         - containerPort: 53
           name: basesvcm

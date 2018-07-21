@@ -256,17 +256,21 @@ spec:
     #  nodeSelector:
     #    nodeattr: sysctl
       #hostNetwork: true
-  #    securityContext:
-  #      # 1.11 how quick upgrade?
-  #      sysctls:
-  #      - name: net.ipv4.conf.all.rp_filter
-  #        value: "0"
-  #      - name: net.ipv4.conf.default.rp_filter
-  #        value: "0"
-  #     # - name: net.ipv4.conf.eth0.rp_filter
-  #     #   value: "0"
-  #      - name: net.ipv4.conf.lo.rp_filter
-  #        value: "0"
+      securityContext:
+        # 1.11 how quick upgrade?
+        sysctls:
+        - name: net.ipv4.conf.all.rp_filter
+          value: "0"
+       # - name: net.ipv4.conf.all.send_redirects
+       #   value: "0"
+        - name: net.ipv4.conf.default.rp_filter
+          value: "0"
+        #- name: net.ipv4.conf.default.send_redirects
+        #  value: "0"
+       # - name: net.ipv4.conf.eth0.rp_filter
+       #   value: "0"
+        - name: net.ipv4.conf.lo.rp_filter
+          value: "0"
       containers:
         - name: nginx-ingress-controller-udpbind
          # image: cs9.dnion.com:5000/udpingress:dev
@@ -291,7 +295,8 @@ spec:
             - --ingress-class=udpingress
             #- --kubeconfig=/etc/kubernetes/admin.conf
            # - --kubeconfig=/etc/kubernetes/kubelet.conf
-            - --v=12
+            #- --v=12
+            - --v=3
                 # securityContext:
                 #   capabilities:
                 #       drop:
@@ -348,17 +353,17 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
-#          volumeMounts:
-#            - mountPath: /etc/nginx/template
-#              name: nginx-template-volume
-#              readOnly: true
-#      volumes:
-#        - name: nginx-template-volume
-#          configMap:
-#            #name: udpnginxtemplateconfig
-#            # if we have create configmap,we need not items below.
-#            name: nginx-template
-#            items:
-#            - key: nginx.tmpl
-#              path: nginx.tmpl
-#
+          volumeMounts:
+            - mountPath: /etc/nginx/template
+              name: nginx-template-volume
+              readOnly: true
+      volumes:
+        - name: nginx-template-volume
+          configMap:
+            #name: udpnginxtemplateconfig
+            # if we have create configmap,we need not items below.
+            name: nginx-template
+            items:
+            - key: nginx.tmpl
+              path: nginx.tmpl
+

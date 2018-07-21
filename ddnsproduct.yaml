@@ -11,7 +11,7 @@ metadata:
   name: ddns
 spec:
   progressDeadlineSeconds: 600
-  replicas: 1
+  replicas: 8
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -96,7 +96,10 @@ metadata:
     run: ddns
   name: ddns
 spec:
+  #externalIPs:
+  #- 183.131.215.252
   externalTrafficPolicy: Local
+  #for nodeport and lb type
   ports:
   - name: basesvcm
     port: 53
