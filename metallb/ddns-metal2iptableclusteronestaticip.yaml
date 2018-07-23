@@ -1,0 +1,51 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  name: ddnsm2tcp
+  annotations:
+  #  metallb.universe.tf/address-pool: production-public-ips
+    metallb.universe.tf/allow-shared-ip: ddnsm2
+spec:
+  externalTrafficPolicy: Local
+  #externalTrafficPolicy: Cluster
+  ports:
+  - name: backupsvcm
+    port: 9153
+    protocol: TCP
+    targetPort: 9153
+  selector:
+    run: ddnsm2
+  sessionAffinity: None
+  type: LoadBalancer
+  loadBalancerIP: 183.131.215.250 
+status:
+  loadBalancer: {}
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  name: ddnsm2udp
+  annotations:
+  #  metallb.universe.tf/address-pool: production-public-ips
+  #  metallb.universe.tf/allow-shared-ip
+    metallb.universe.tf/allow-shared-ip: ddnsm2
+spec:
+  externalTrafficPolicy: Local
+  #externalTrafficPolicy: Cluster
+  ports:
+  - name: basesvcm
+    port: 53
+    protocol: UDP
+    targetPort: 53
+  selector:
+    run: ddnsm2
+  sessionAffinity: None
+  type: LoadBalancer
+  loadBalancerIP: 183.131.215.250
+status:
+  loadBalancer: {}
