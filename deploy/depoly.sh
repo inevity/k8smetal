@@ -47,7 +47,8 @@ sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 http_proxy="http://creativebaul.asuscomm.com:8123/"
 #no_proxy="registr.dnion.com,localhost,127.0.0.1,183.131.215.156,10.96.0.0/12,10.244.0.0/16"
 #maybe use subnet for masterip net
-no_proxy="${mastername},localhost,127.0.0.1,${masterip},10.96.0.0/12,10.244.0.0/16"
+#must use the hostname, not the ip. docker pull will use the hostname!!!
+no_proxy="${mastername},localhost,127.0.0.1,${masterip},${registrip},${registrname},10.96.0.0/12,10.244.0.0/16"
 https_proxy="http://creativebaul.asuscomm.com:8123"
 
 
@@ -83,8 +84,8 @@ cat <<EOF > /etc/docker/daemon.json
 }
 EOF
 
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+systemctl daemon-reload
+systemctl restart docker
 
 
 #kube install 
@@ -179,7 +180,12 @@ pushd k8smetal
 kubectl apply -f kube-flannel
 kubectl get po,svc  --all-namespaces
 #check coredns have ready
-
+#kcpod -o wide|grep coredns|awk '{print $4}'|xarg 
+#[root@k8s01 k8smetal]# kubectl get pods --all-namespaces -o=jsonpath="{..status.phase}" -l k8s-app=kube-dns
+#Pending Pending[root@k8s01 k8smetal]#
+#Running Running
+#kubectl get pods --all-namespaces -o=jsonpath="{..status.containerStatuses[*].ready}" -l k8s-app=kube-dns
+#true true[root@k8s01 k8smetal]#
 popd
 
 
@@ -194,7 +200,8 @@ pushd metrics-server
 ##        - --source=kubernetes.summary_api:https://kubernetes.default?kubeletPort=10250&kubeletHttps=true&insecure=true
 #        - --source=
 #sed -i 's/^acl verizonfios.*/acl verizonfios src 202.1.2.3/' /etc/squid/squid.conf
-sed -i 's|^        - --source=.*|        - --source=kubernetes.summary_api:https://kubernetes.default?kubeletPort=10250&kubeletHttps=true&insecure=true/' deploy/1.8+/metrics-server-deployment.yaml
+#sed -i 's|^        - --source=.*|        - --source=kubernetes.summary_api:https://kubernetes.default?kubeletPort=10250&kubeletHttps=true&insecure=true/' deploy/1.8+/metrics-server-deployment.yaml
+sed -i 's|^        - --source=.*|        - --source=kubernetes.summary_api:https://kubernetes.default?kubeletPort=10250\&kubeletHttps=true\&insecure=true|' deploy/1.8+/metrics-server-deployment.yaml
 #
 ##[root@registr metrics-server]# cat deploy/1.8+/metrics-server-deployment.yaml
 kubectl create -f deploy/1.8+
@@ -203,7 +210,9 @@ popd
 #todo docker register create:
 mkdir -p /etc/docker/certs.d/registr.dnion.com:5000/
 scp -pr root@registr.dnion.com:/certs/ca.crt /etc/docker/certs.d/registr.dnion.com\:5000/
-scp -pr root@registr.dnion.com:/certs/ca.crt /etc/docker/certs.d/registr.dnion.com\:5000/
+
+
+
 ##docker login ...
 #
 
@@ -212,6 +221,7 @@ scp -pr root@registr.dnion.com:/certs/ca.crt /etc/docker/certs.d/registr.dnion.c
 #mkdir -p /sys/fs/cgroup/hugetlb/system.slice/kubelet.service
 #echo 'KUBELET_EXTRA_ARGS=--cpu-manager-policy=static --kube-reserved=cpu=4000m  --kube-reserved-cgroup=/system.slice/kubelet.service --system-reserved=cpu=2000m --system-reserved-cgroup=/system.slice --enforce-node-allocatable=pods,kube-reserved,system-reserved' > /etc/sysconfig/kubelet
 ##KUBELET_EXTRA_ARGS=--allowed-unsafe-sysctls='net.ipv4.conf*'
+#maybe need delete non-system pod or drain will be hang .
 #kubectl drain registr.dnion.com
 #kubectl drain registr.dnion.com --ignore-daemonsets
 #cat /var/lib/kubelet/cpu_manager_state
@@ -238,7 +248,7 @@ scp -pr root@registr.dnion.com:/certs/ca.crt /etc/docker/certs.d/registr.dnion.c
 
 
 #ipvs ds confmap change and delete pod?
-#modprobe ip_vs && modprobe ip_vs_rr && modprobe ip_vs_wrr && modprobe ip_vs_sh
+#modprobe ip_vs && modprobe ip_vs_rr && modprobe ip_vs_wrr && modprobe ip_vs_sh && modprobe nf_conntrack_ipv4
 
 # container pod sysct config and static config
 #cat /etc/sysconfig/kubelet
@@ -253,6 +263,8 @@ scp -pr root@registr.dnion.com:/certs/ca.crt /etc/docker/certs.d/registr.dnion.c
 pushd k8smetal/metallb
 kubectl  apply -f metallb.yaml
 kubectl   apply -f metallbarpcfgmap.yaml
+#if registr.dnion.com not access,forbidden.
+#use docker pull registr.dnion.com:5000/ddns:v1 (change the no_proxy of docker to including the hostname"
 kubectl   apply -f metallb/ddnsdeploy.yaml
 kubectl   apply -f  ddns-metal2iptableclusteronestaticip.yaml
 popd
